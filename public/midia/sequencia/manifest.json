@@ -1,0 +1,32 @@
+{
+  "source": {
+    "filename": "Criar_v\u00eddeo_profissional_minimal\u2026_1080p_20261005172833.mp4",
+    "duration": 10.0,
+    "resolution": "1920x1080",
+    "fps": 24.0,
+    "codec": "h264",
+    "total_source_frames": 240
+  },
+  "frames": {
+    "target_count": 240,
+    "format": "webp",
+    "quality": 68,
+    "naming_pattern": "frame-{NNNN}.webp"
+  },
+  "recommended_scroll_height": "800vh",
+  "created": "2026-10-06T10:18:09",
+  "desktop": {
+    "resolution": "1600x900",
+    "actual_count": 240,
+    "total_bytes": 8037566,
+    "avg_frame_bytes": 33489,
+    "total_mb": 7.67
+  },
+  "mobile": {
+    "resolution": "900x506",
+    "actual_count": 240,
+    "total_bytes": 4017668,
+    "avg_frame_bytes": 16740,
+    "total_mb": 3.83
+  }
+}

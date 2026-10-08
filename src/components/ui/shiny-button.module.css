@@ -1,0 +1,122 @@
+@property --wordcom-shiny-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 14px 24px;
+  border: 1px solid transparent;
+  border-radius: 32px;
+  background:
+    linear-gradient(#07030f, #07030f) padding-box,
+    conic-gradient(from var(--wordcom-shiny-angle), #ffffff26, #ff7d00 5%, #fff0e4 10%, #ff7d00 15%, #ffffff26 20%) border-box;
+  box-shadow: inset 0 0 0 1px #ffffff0d;
+  color: #f9f9f9;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.4;
+  cursor: pointer;
+  animation: sweep 3s linear infinite;
+  transition: color 200ms ease, box-shadow 200ms ease;
+}
+
+.button[aria-selected="true"] {
+  color: #ffbb7a;
+  background:
+    linear-gradient(#24120d, #120908) padding-box,
+    conic-gradient(from var(--wordcom-shiny-angle), #ff7d0080, #ff7d00 5%, #fff0e4 10%, #ff7d00 15%, #ff7d0080 20%) border-box;
+  box-shadow: inset 0 0 0 1px #ff7d0033;
+}
+
+.speckle,
+.sheen {
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.speckle {
+  inset: 3px;
+  border-radius: inherit;
+  background: radial-gradient(#fff 0.5px, transparent 0.75px) 0 0 / 4px 4px;
+  mask-image: conic-gradient(from var(--wordcom-shiny-angle), #000, transparent 10% 90%, #000);
+  opacity: 0.14;
+}
+
+.sheen {
+  top: 50%;
+  left: 50%;
+  width: 110%;
+  aspect-ratio: 1;
+  background: linear-gradient(-50deg, transparent 35%, #ff7d00 50%, transparent 65%);
+  opacity: 0.1;
+  transform: translate(-50%, -50%) rotate(0deg);
+  animation: shimmer 3s linear infinite;
+  transition: opacity 200ms ease;
+}
+
+.label {
+  position: relative;
+  z-index: 1;
+}
+
+.button:focus-visible {
+  outline: 2px solid #ffbb7a;
+  outline-offset: 4px;
+}
+
+.button:active {
+  transform: translateY(1px);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  animation-play-state: paused;
+}
+
+.button:disabled .sheen {
+  animation-play-state: paused;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button:not(:disabled):hover {
+    color: #ffbb7a;
+    box-shadow: inset 0 0 0 1px #ff7d0066;
+  }
+
+  .button:not(:disabled):hover .sheen {
+    opacity: 0.22;
+  }
+}
+
+@keyframes sweep {
+  to { --wordcom-shiny-angle: 360deg; }
+}
+
+@keyframes shimmer {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@media (max-width: 700px) {
+  .button {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .sheen {
+    animation: none;
+    transition: none;
+  }
+}

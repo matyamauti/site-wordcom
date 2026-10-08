@@ -1,0 +1,25 @@
+.section:is(.method, .clients, .projects, .agenda) {
+  background-color: #120d1a;
+  background-image:
+    linear-gradient(#120d1a55, #120d1a55),
+    url("/midia/fundo-institucional.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Fade the moving brands without painting over the photographic background. */
+.clients .marqueeRoot {
+  --marquee-edge: 64px;
+  mask-image: linear-gradient(to right, transparent, #000 var(--marquee-edge), #000 calc(100% - var(--marquee-edge)), transparent);
+}
+
+.clients .marqueeFade { display: none; }
+
+@media (max-width: 600px) {
+  .clients .marqueeRoot { --marquee-edge: 32px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clients .marqueeRoot { mask-image: none; }
+}

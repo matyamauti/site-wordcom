@@ -1,0 +1,350 @@
+/* ==========================================================================
+   Cases em coverflow 3D — WordCom
+   --------------------------------------------------------------------------
+   As artes são imagens fechadas: trazem texto, marca e layout dentro do
+   bitmap. A janela acompanha o contorno do card dentro de cada arte,
+   removendo apenas a margem externa, sem recortar o conteudo.
+
+   Do componente de referência veio só a matemática do coverflow. O resto é
+   do projeto, porque o dele é de outro mundo visual e carrega o que o piso
+   proíbe por nome: dourado de restaurante, eyebrow com fios, backdrop-filter
+   decorativo, halo de sombra sem offset, `transition: all` e autoplay sem
+   controle de pausa.
+   ========================================================================== */
+
+#cases {
+  position: relative;
+  isolation: isolate;
+  background: #15101c;
+}
+
+.casesVideo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+#cases > .heading,
+#cases > .cases3d {
+  position: relative;
+  z-index: 1;
+}
+
+#cases .kicker {
+  color: #ffbb7a;
+}
+
+#cases .heading h2 {
+  font-weight: 780;
+  letter-spacing: 0;
+}
+
+#cases .heading h2 em {
+  background: linear-gradient(104deg, #a855f7, #e0479a 48%, #ff7d00);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-style: normal;
+}
+
+.cases3d {
+  /* A arte agora É o conteúdo: o texto do case está dentro dela e precisa
+     ser lido. Então o card fica o maior que a coluna permite, e os vizinhos
+     viram só uma borda espiando — o bastante para dizer "tem mais ao lado"
+     sem roubar largura de quem precisa ler. */
+  /* Largura do card central. Em vw/px de propósito, nunca em %: a altura do
+     palco é calculada a partir daqui, e % dentro de `height` resolve contra
+     a ALTURA do pai, não a largura — foi o que fez o card vazar por cima
+     das seções vizinhas antes. */
+  --card: min(88vw, 620px);
+  /* deslocamento do vizinho, na mesma proporção do componente original
+     (285 ÷ 330 = 0.864) */
+  --vizinho: calc(var(--card) * 0.864);
+  /* Janela da arte 1448x1086: x=32, y=34, largura=1384, altura=1020. */
+  --proporcao: calc(1384 / 1020);
+  --curva: cubic-bezier(0.23, 1, 0.32, 1);
+  --tempo: 420ms;
+
+  position: relative;
+  margin-top: 54px;
+  /* os vizinhos passam da borda da coluna de propósito; `clip` corta sem
+     criar contexto de rolagem, então a página não ganha barra horizontal */
+  overflow-x: clip;
+}
+
+/* o palco. perspective aqui, nos filhos só o transform. */
+.cases3dPalco {
+  position: relative;
+  height: calc(var(--card) / var(--proporcao) + 40px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1400px;
+  /* o gesto é horizontal: libera o scroll vertical da página por cima dele,
+     senão o dedo fica preso tentando rolar o site */
+  touch-action: pan-y;
+}
+
+.cases3dCard {
+  position: absolute;
+  width: var(--card);
+  aspect-ratio: var(--proporcao);
+  border: 0;
+  padding: 0;
+  border-radius: 4.625% / 6.275%;
+  overflow: hidden;
+  background: #171717;
+  /* sombra com offset E blur — halo de raio zero é decoração, não é
+     sistema de profundidade */
+  box-shadow: 0 18px 44px #00000080;
+  transform-origin: center center;
+  /* nunca `all`: ela anima o que mudar, inclusive o que força layout, e
+     tira a animação da GPU */
+  transition:
+    transform var(--tempo) var(--curva),
+    opacity var(--tempo) var(--curva),
+    filter var(--tempo) var(--curva),
+    box-shadow var(--tempo) var(--curva);
+}
+
+.cases3dCard img {
+  position: absolute;
+  left: -2.31214%;
+  top: -3.33333%;
+  width: 104.62428%;
+  max-width: none;
+  height: 106.47059%;
+  object-fit: contain;
+  display: block;
+}
+
+/* as três posições do coverflow. Com três artes só existem estas três. */
+.cases3dCard[data-pos="centro"] {
+  transform: translateX(0) scale(1) rotateY(0deg);
+  opacity: 1;
+  z-index: 3;
+  filter: none;
+  box-shadow: 0 26px 60px #000000a6;
+  cursor: default;
+}
+
+.cases3dCard[data-pos="direita"] {
+  transform: translateX(var(--vizinho)) scale(0.84) rotateY(-24deg);
+  opacity: 0.58;
+  z-index: 2;
+  filter: brightness(0.7);
+  cursor: pointer;
+}
+
+.cases3dCard[data-pos="esquerda"] {
+  transform: translateX(calc(var(--vizinho) * -1)) scale(0.84) rotateY(24deg);
+  opacity: 0.58;
+  z-index: 2;
+  filter: brightness(0.7);
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cases3dCard[data-pos="direita"]:hover,
+  .cases3dCard[data-pos="esquerda"]:hover {
+    opacity: 0.82;
+    filter: brightness(0.86);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Interação dentro do card
+   -------------------------------------------------------------------------- */
+
+/* o botão invisível que cobre a arte dos cards laterais: clicar em qualquer
+   ponto traz aquele case para o centro. Alvo grande de propósito. */
+.cases3dIr {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  padding: 0;
+  background: #0000;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+/* o CTA real, só no card central.
+   CONTRASTE: a arte por baixo é variável, então o texto não pode depender
+   dela. O scrim abaixo compõe para ~#212121 na faixa do rótulo, que é o
+   mesmo fundo do resto do site — #f9f9f9 sobre ele dá 15.29:1 medido, e
+   mesmo com a arte em branco puro a faixa não sobe acima de ~#2e2e2e
+   (12.9:1). Passa AA com folga em qualquer arte que você use. */
+.cases3dCta {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  /* 44px de alvo de toque contando o padding, sem inchar o rótulo */
+  min-height: 44px;
+  padding: 14px 20px 17px;
+
+  color: #f9f9f9;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+
+  background: linear-gradient(0deg, #212121f2 0%, #212121d9 52%, #21212100 100%);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+
+  transition:
+    color 160ms var(--curva),
+    gap 160ms var(--curva);
+}
+
+.cases3dCta svg {
+  flex: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cases3dCta:hover {
+    color: #ff7d00;
+    /* o ícone se afasta 4px: o movimento diz "isto leva a outro lugar"
+       sem precisar de sublinhado nem de caixa */
+    gap: 14px;
+  }
+}
+
+.cases3dCta:focus-visible {
+  outline: 2px solid #ff7d00;
+  outline-offset: -4px;
+}
+
+/* foco de teclado visível nos cards laterais */
+.cases3dIr:focus-visible {
+  outline: 2px solid #ff7d00;
+  outline-offset: -3px;
+}
+
+/* --------------------------------------------------------------------------
+   Controles. Ficam FORA do palco, nunca sobre a arte: as artes 2 e 3 já têm
+   setas pintadas dentro delas, e sobrepor controle a controle confunde.
+   -------------------------------------------------------------------------- */
+
+.cases3dControles {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  margin-top: 38px;
+}
+
+.cases3dControles button {
+  width: 44px; /* alvo de toque mínimo */
+  height: 44px;
+  border-radius: 50%;
+  background: #0000;
+  border: 1px solid #ffffff38;
+  color: #f9f9f9;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  transition:
+    border-color 160ms var(--curva),
+    color 160ms var(--curva),
+    transform 160ms var(--curva);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cases3dControles button:hover {
+    border-color: #ff7d00;
+    color: #ff7d00;
+  }
+}
+
+.cases3dControles button:active {
+  transform: scale(0.94);
+}
+
+.cases3dControles button:focus-visible {
+  outline: 2px solid #ff7d00;
+  outline-offset: 3px;
+}
+
+/* o contador em algarismos tabulares: sem isso o número dança de largura a
+   cada troca, porque os dígitos da Montserrat têm larguras diferentes */
+.cases3dContador {
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.18em;
+  color: #a9a9ae;
+  min-width: 56px;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   Responsivo
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .cases3d {
+    --card: 86vw;
+  }
+
+  /* em tela estreita os vizinhos só atrapalhariam a leitura da arte central */
+  .cases3dCard[data-pos="direita"],
+  .cases3dCard[data-pos="esquerda"] {
+    opacity: 0.26;
+  }
+
+  .cases3dCta {
+    padding: 12px 16px 14px;
+    letter-spacing: 0.1em;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Movimento reduzido: a troca continua acontecendo (ela é o conteúdo), mas
+   sem o giro 3D e sem deslocamento — só a opacidade muda. Reduzir é menos e
+   mais suave, não desligar.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cases3dCard {
+    transition:
+      opacity 180ms linear,
+      filter 180ms linear;
+  }
+
+  .cases3dCard[data-pos="direita"],
+  .cases3dCard[data-pos="esquerda"] {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .cases3dControles button:active {
+    transform: none;
+  }
+
+  .cases3dCta {
+    transition: color 160ms linear;
+  }
+
+  .cases3dCta:hover {
+    gap: 10px;
+  }
+}

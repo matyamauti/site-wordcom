@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.vercel/
+.pnpm-store/
+.agents/
+.claude/
+skills/
+reference/
+.env*
+*.tsbuildinfo
+CLAUDE.md
+skills-lock.json

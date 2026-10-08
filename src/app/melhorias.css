@@ -1,0 +1,912 @@
+/* ==========================================================================
+   Camada de melhorias — WordCom
+   --------------------------------------------------------------------------
+   Regra desta camada: NÃO mudar a aparência. O design fica como está.
+   Só entra aqui o que é defeito funcional, de acessibilidade ou de
+   performance, e cada bloco diz o que corrige e por quê.
+
+   original.css é do site atual e fica intocado, para o diff continuar legível.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Baseline mobile (skill: mobile-native)
+   Nada aqui é visível no desktop.
+   -------------------------------------------------------------------------- */
+
+html {
+  /* remove o flash cinza/azul que o iOS e o Android pintam sobre o elemento
+     tocado — é o sinal mais alto de "isto é um site", e briga com o estado
+     :active que o próprio design já define */
+  -webkit-tap-highlight-color: transparent;
+  /* impede o Safari de inflar a fonte ao girar para paisagem */
+  -webkit-text-size-adjust: 100%;
+}
+
+/* o alvo de toque não dispara duplo-toque-zoom, então o clique não espera
+   os ~300ms de desambiguação */
+.btn,
+.under,
+.services a,
+.projectList a,
+.events a,
+.carouselControls button,
+.whatsappFloat,
+.nav nav a,
+button,
+[type="submit"] {
+  touch-action: manipulation;
+}
+
+/* rótulo de controle não é conteúdo: segurar o dedo não deve selecioná-lo
+   nem abrir o balão de copiar do iOS. O texto do site continua selecionável. */
+.btn,
+.carouselControls button,
+.whatsappFloat,
+.nav nav a {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* --------------------------------------------------------------------------
+   2. Altura do hero (defeito real de mobile)
+   100vh é o viewport MAIOR: na carga, com a barra de URL visível, o hero
+   transborda exatamente a altura dessa barra e empurra o conteúdo.
+   100svh é o menor, então nada é cortado. Visualmente idêntico no desktop.
+   -------------------------------------------------------------------------- */
+
+.hero {
+  height: 100svh;
+}
+
+/* --------------------------------------------------------------------------
+   3. Zoom involuntário no formulário (defeito real de iOS)
+   O iOS Safari dá zoom na página quando o foco cai num input com fonte
+   menor que 16px — e não desfaz o zoom ao sair. Os campos têm 14px.
+   Correção aplicada SÓ em ponteiro grosso: o desktop mantém os 14px do
+   design, o celular recebe 16px. Jamais usar user-scalable=no para isso.
+   -------------------------------------------------------------------------- */
+
+@media (pointer: coarse) {
+  .contact input,
+  .contact select,
+  .contact textarea {
+    font-size: 16px;
+  }
+}
+
+/* altura mínima de alvo de toque nos campos, sem alterar o desenho */
+@media (pointer: coarse) {
+  .contact input:not([type="checkbox"]),
+  .contact select {
+    min-height: 44px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. Hover preso no toque (defeito real de mobile)
+   Em touch o browser finge um :hover e o deixa colado até o próximo toque
+   em outro lugar — então o botão fica "levantado" depois de tocado.
+   Os mesmos efeitos passam a valer só onde existe ponteiro fino de verdade.
+   O :active continua funcionando em qualquer entrada.
+   -------------------------------------------------------------------------- */
+
+@media (hover: none), (pointer: coarse) {
+  .btn:hover,
+  .services article:hover,
+  .projectList a:hover,
+  .events article:hover,
+  .whatsappFloat:hover,
+  .sectorList span:hover,
+  .logos span:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  .nav nav a:hover {
+    color: inherit;
+    opacity: 0.72;
+  }
+}
+
+/* feedback de pressão: o design tinha hover mas não tinha :active, então no
+   celular nada confirmava o toque. 160ms, dentro do orçamento da skill. */
+.btn:active,
+.whatsappFloat:active {
+  transform: scale(0.97);
+}
+
+/* --------------------------------------------------------------------------
+   5. transition: all (performance)
+   `all` anima qualquer propriedade que mude, inclusive as que forçam layout,
+   e tira a animação da GPU. Mesmas durações, mesmas curvas, só nomeando as
+   propriedades que de fato mudam. Visualmente idêntico.
+   -------------------------------------------------------------------------- */
+
+.btn {
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s,
+    opacity 0.25s;
+}
+
+.services article,
+.projectList a {
+  transition:
+    transform 0.25s,
+    background-color 0.25s,
+    border-color 0.25s,
+    box-shadow 0.25s;
+}
+
+.contact input,
+.contact select,
+.contact textarea {
+  transition:
+    background-color 0.25s,
+    border-color 0.25s,
+    box-shadow 0.25s;
+}
+
+/* --------------------------------------------------------------------------
+   6. Contraste (WCAG AA) — valores medidos, não estimados.
+   As três primeiras correções são de margem: a diferença é imperceptível a
+   olho, mas cruza o limiar de 4.5:1 para texto normal.
+   -------------------------------------------------------------------------- */
+
+/* 4.35:1 -> 4.62:1 */
+.services p {
+  color: #6e6e6e;
+}
+
+/* 4.11:1 -> 4.63:1 */
+.logos span {
+  color: #6b6b6b;
+}
+
+/* 4.25:1 -> 4.616:1  (texto claro sobre #101010) */
+footer > p,
+footer small {
+  color: #828282;
+}
+
+/* --------------------------------------------------------------------------
+   7. Safe areas (iOS com notch) — exige viewport-fit=cover, já no layout.
+   Sem isto o botão flutuante do WhatsApp cai sobre a barra de gestos.
+   -------------------------------------------------------------------------- */
+
+.whatsappFloat {
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+  right: calc(22px + env(safe-area-inset-right, 0px));
+}
+
+.nav {
+  padding-left: max(5vw, env(safe-area-inset-left, 0px));
+  padding-right: max(5vw, env(safe-area-inset-right, 0px));
+}
+
+/* --------------------------------------------------------------------------
+   8. Link de pular para o conteúdo (acessibilidade)
+   Sem ele, quem navega por teclado atravessa o menu inteiro em cada carga.
+   Invisível até receber foco.
+   -------------------------------------------------------------------------- */
+
+.pularConteudo {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: #ff7d00;
+  color: #212121;
+  padding: 14px 20px;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pularConteudo:focus {
+  left: 12px;
+  top: 12px;
+}
+
+/* --------------------------------------------------------------------------
+   9. Movimento reduzido — o original já respeita, aqui só se completa a
+   cobertura para o que ficou de fora (transforms de hover e o :active novo).
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .btn,
+  .services article,
+  .projectList a,
+  .events article,
+  .whatsappFloat {
+    transition-property: background-color, border-color, color, box-shadow;
+  }
+  .btn:hover,
+  .btn:active,
+  .projectList a:hover,
+  .services article:hover,
+  .whatsappFloat:hover,
+  .whatsappFloat:active {
+    transform: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   10. Texto só para leitor de tela — dá nome acessível aos links cujo
+   conteúdo visível é apenas a seta decorativa.
+   -------------------------------------------------------------------------- */
+
+.soLeitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   11. Links sociais no rodapé — eram texto puro ("Instagram · LinkedIn ·
+   YouTube"), sem link nenhum. Agora são links e herdam exatamente o
+   mesmo desenho; o sublinhado aparece só no hover para não mudar o visual.
+   -------------------------------------------------------------------------- */
+
+footer div a {
+  color: inherit;
+  text-decoration: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  footer div a:hover {
+    color: #ff7d00;
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   12. Mesmo defeito de 100vh nas páginas de projeto.
+   -------------------------------------------------------------------------- */
+
+.product {
+  min-height: 100svh;
+}
+
+.productHero {
+  min-height: 100svh;
+}
+
+/* --------------------------------------------------------------------------
+   13. Logo: caminho e proporção.
+   O arquivo sempre esteve em /public/marca/, mas o código pedia a raiz —
+   então o logo estava 404 em todas as páginas. Além disso as dimensões
+   declaradas (150x38) não eram as do arquivo (2048x852, proporção 2.404):
+   um esticão horizontal de 64%, que ninguém viu porque a imagem nunca
+   carregou.
+
+   O CSS do site define a LARGURA do logo (135px na nav, 122px num
+   breakpoint, 150px no rodapé) e deixava a altura vir do atributo. Com os
+   dois fixados e discordando entre si, a imagem deforma em qualquer
+   breakpoint que não seja o declarado. `height: auto` faz a altura seguir a
+   largura escolhida pelo CSS, seja ela qual for.
+   -------------------------------------------------------------------------- */
+
+.nav img,
+footer img {
+  height: auto;
+}
+
+/* --------------------------------------------------------------------------
+   14. Cabeçalho de seção com título sozinho
+   --------------------------------------------------------------------------
+   .heading é uma grade de duas colunas (1.3fr .7fr): título à esquerda,
+   parágrafo de apoio à direita. Em "Soluções" e "Metodologia" o parágrafo
+   saiu, e o título sozinho numa coluna de 1.3fr ficaria espremido contra a
+   margem esquerda enquanto 35% da largura ficava vazia.
+
+   Aqui a grade vira uma coluna só. A medida do título é limitada por `ch` e
+   não pela coluna — um título de peso 350 em 76px passa de 80 caracteres de
+   medida se deixado solto na largura toda.
+   -------------------------------------------------------------------------- */
+
+.headingSo {
+  grid-template-columns: 1fr;
+  margin-bottom: clamp(44px, 5vw, 78px);
+}
+
+/* O título solto numa linha ficava cru: uma frase curta em peso 350 atravessando
+   a largura toda não compõe bloco nenhum. A medida em `ch` força a quebra em
+   duas linhas e devolve massa ao conjunto — "Uma única / direção" e
+   "Do desafio / ao Resultado".
+
+   A ênfase vem de escala e entrelinha, não de acento: acentuar uma palavra do
+   título, pôr rótulo acima dele ou gradiente no texto são as três coisas que o
+   CLAUDE.md deste projeto proíbe por nome. O peso 350 continua sendo a voz do
+   site; o que mudou foi o corpo e o aperto. */
+/* Uma linha só e em peso cheio. O corpo é função da largura, não uma clamp com
+   piso fixo: com `nowrap`, um piso de 50px estouraria a tela num celular. O
+   coeficiente de cada título sai do seu próprio comprimento — "Uma única
+   direção" tem 17 caracteres, "Do desafio ao Resultado" tem 23, e a 7,2vw o
+   segundo transbordaria onde o primeiro ainda cabe.
+
+   O 780 é o peso que o site já usa em `.heading h2 em`: não é um negrito novo,
+   é o negrito da casa — aplicado ao título inteiro, não a uma palavra dele. */
+.headingSo h2 {
+  max-width: none;
+  white-space: nowrap;
+  font-weight: 780;
+  font-size: min(7.4vw, 104px);
+  /* a Montserrat vem pelo next/font como variável; deixar o eixo óptico agir */
+  font-optical-sizing: auto;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+
+.headingSoLongo h2 {
+  font-size: min(5.5vw, 78px);
+}
+
+/* Tracking e entrelinha são específicos do TAMANHO, nunca um valor só para
+   todos (apple-design §15). Um `em` fixo parece proporcional mas não é a mesma
+   coisa: conforme o corpo cresce, as letras precisam de aperto relativo MAIOR.
+   Em peso 780 o aperto pode ir mais longe que em 350 — letra pesada tem menos
+   ar entre as hastes. */
+@media (min-width: 900px) {
+  .headingSo h2 {
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+}
+
+@media (min-width: 1300px) {
+  .headingSo h2 {
+    line-height: 0.98;
+    letter-spacing: -0.058em;
+  }
+}
+
+/* Abaixo de 700px a linha única cobraria caro: para "Do desafio ao Resultado"
+   caber inteira num celular de 375px, o corpo cairia para ~21px, que não lê
+   mais como título. Aqui ele volta a quebrar, em corpo legível. A linha única é
+   o que se vê no desktop, que é onde o título compõe a seção. */
+@media (max-width: 700px) {
+  .headingSo h2 {
+    white-space: normal;
+    font-size: clamp(34px, 9.6vw, 46px);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+  }
+
+  .headingSoLongo h2 {
+    font-size: clamp(32px, 8.6vw, 42px);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   15. Cabeçalho da jornada do método
+   --------------------------------------------------------------------------
+   DECISÃO DO DONO, CONTRA DUAS REGRAS DESTE PROJETO, registrada aqui para não
+   parecer descuido depois: o CLAUDE.md proíbe por nome "eyebrow/kicker acima de
+   título (ban absoluto)", "texto em gradiente" e "acentuar uma palavra do
+   título". As três entram nesta seção porque ele pediu a composição igual à
+   referência que mandou, e foi perguntado antes.
+
+   O gradiente NÃO começa no #7d00ff da marca: medido, ele dá ~2,4:1 sobre o
+   fundo desta seção e reprova mesmo no mínimo de 3:1 para texto grande — é o
+   mesmo teto que medi na hero. Começa em #a855f7, que passa, e segue para
+   magenta e laranja. A direção da cor é a mesma; muda o ponto de partida.
+   -------------------------------------------------------------------------- */
+
+.headingJornada {
+  grid-template-columns: 1.35fr 0.65fr;
+  align-items: end;
+  gap: clamp(28px, 5vw, 90px);
+  margin-bottom: clamp(44px, 5vw, 76px);
+}
+
+/* O rótulo com um fio saindo dele, como na referência. O fio não é enfeite
+   solto: ele empurra o olho para a direita, na direção em que o título começa. */
+.jornadaRotulo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 18px;
+  font-size: 11px;
+  font-weight: 650;
+  /* o espacejamento positivo é o que o texto pequeno pede (apple-design §15) */
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: #cf8fd8;
+}
+
+.jornadaRotulo::after {
+  content: "";
+  flex: none;
+  width: clamp(44px, 7vw, 108px);
+  height: 1px;
+  background: linear-gradient(90deg, #cf8fd8, #cf8fd800);
+}
+
+.headingJornada h2 {
+  margin: 0;
+  max-width: 14ch;
+  font-size: min(6.4vw, 92px);
+  font-weight: 780;
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+  font-optical-sizing: auto;
+}
+
+.headingJornada h2 strong {
+  font-weight: inherit;
+  background: linear-gradient(104deg, #a855f7, #e0479a 48%, #ff7d00);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: #0000;
+}
+
+.jornadaApoio {
+  margin: 0;
+  max-width: 34ch;
+  font-size: 15px;
+  line-height: 1.75;
+  color: #b9b9c0;
+}
+
+@media (max-width: 860px) {
+  .headingJornada {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 22px;
+  }
+
+  .headingJornada h2 {
+    max-width: none;
+    font-size: clamp(34px, 9.4vw, 46px);
+    line-height: 1.06;
+    letter-spacing: -0.03em;
+  }
+
+  .jornadaRotulo {
+    margin-bottom: 14px;
+    letter-spacing: 0.2em;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   16. Cabeçalho da seção de projetos
+   --------------------------------------------------------------------------
+   Mesma decisão do dono já registrada no bloco 15: o rótulo acima do título e o
+   gradiente numa parte do título são proibidos por nome neste projeto e entram
+   porque ele pediu a seção igual à referência.
+
+   O gradiente aqui vai de rosa a laranja, como na imagem — e não começa no
+   roxo, justamente por isso: o #7d00ff reprova no contraste sobre fundo
+   escuro, e a referência já começa no rosa.
+   -------------------------------------------------------------------------- */
+
+.headingProjetos {
+  grid-template-columns: 1.25fr 0.75fr;
+  align-items: start;
+  gap: clamp(28px, 5vw, 80px);
+}
+
+.projetoRotulo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 22px;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #d7cfe4;
+}
+
+/* o fio curto ANTES do texto, como na referência */
+.projetoRotulo::before {
+  content: "";
+  flex: none;
+  width: 42px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #a855f7, #e0479a);
+}
+
+.headingProjetos h2 {
+  margin: 0;
+  font-size: min(5.6vw, 82px);
+  font-weight: 350;
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  font-optical-sizing: auto;
+}
+
+.headingProjetos h2 strong {
+  font-weight: 780;
+  background: linear-gradient(96deg, #ff4d9d, #ff6b3d 58%, #ff8a1f);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: #0000;
+}
+
+/* o fio vertical separando o título do texto de apoio */
+.headingProjetos > p {
+  position: relative;
+  padding-left: clamp(22px, 2.6vw, 42px);
+  max-width: 44ch;
+  color: #cdc8d6;
+  font-size: 14.5px;
+  line-height: 1.75;
+}
+
+.headingProjetos > p::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: #ffffff2b;
+}
+
+@media (max-width: 860px) {
+  .headingProjetos {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .headingProjetos h2 {
+    font-size: clamp(34px, 9.4vw, 48px);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+  }
+
+  .headingProjetos > p {
+    padding-left: 0;
+  }
+
+  .headingProjetos > p::before {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   17. Vídeo de fundo na seção Estrutura
+   --------------------------------------------------------------------------
+   O VÉU NÃO É CHUTE. Amostrei 12 quadros do vídeo em 320×180 e calculei, pixel
+   a pixel, o contraste do texto papel (#f9f9f9) contra o vídeo composto com
+   preto em várias opacidades:
+
+     véu  0%  -> pior pixel 1,05:1   (texto some nas nuvens brancas)
+     véu 50%  -> pior pixel 3,78:1   reprova
+     véu 60%  -> pior pixel 5,45:1   passa
+     véu 68%  -> pior pixel 7,47:1   passa com folga
+
+   68% é o piso aqui. O degradê abaixo só escurece MAIS que isso nas bordas
+   (0,80 em cima e embaixo), nunca menos — o ponto mais claro continua sendo o
+   0,68 que eu medi.
+   -------------------------------------------------------------------------- */
+
+.section.about {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.aboutVideo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.aboutVideo + div {
+  /* o véu entra como pseudo-elemento da própria seção, para não virar item da
+     grade de duas colunas */
+}
+
+.section.about::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    #000000cc,
+    #000000ad 46%,
+    #000000cc
+  );
+}
+
+/* o conteúdo sobe acima do vídeo e do véu */
+.section.about > div {
+  position: relative;
+  z-index: 2;
+}
+
+/* Medido no quadro ao vivo, com o véu real aplicado: o pior pixel do vídeo
+   compõe em rgb(82,82,82), e contra ele
+     título e link #f9f9f9 -> 7,42:1   passam
+     texto #aaa            -> 3,39:1   REPROVA
+     rótulo #ff7d00        -> 3,05:1   REPROVA
+   Os dois abaixo são os tons da mesma família que passam. */
+.section.about > div:last-child p {
+  color: #d2d2d8;
+}
+
+.section.about .kicker {
+  /* o laranja da marca clareado: 3,05 -> 4,70 */
+  color: #ffbb7a;
+}
+
+/* --------------------------------------------------------------------------
+   18. Fundo de ondas nas seções claras
+   --------------------------------------------------------------------------
+   Com lightMode desligado o shader emite linhas de cor com alfa sobre
+   transparência (linha 144 do shader). O fundo quem dá é a seção — e a pedido
+   do dono ele passa a ser ESCURO, não o #f5f5f7 que `.light` definia.
+
+   Isso inverte quatro seções do site. Todo o texto delas era escuro sobre claro
+   e precisou ser remedido; as correções estão logo abaixo, cada uma com o
+   número que a motivou.
+
+   O canvas NÃO leva pointer-events: none: ele fica abaixo do conteúdo no eixo z,
+   então clique em card, botão ou link acerta o conteúdo. Nas áreas vazias o
+   canvas recebe o ponteiro, que é justamente o que faz o mouseInfluence do
+   componente funcionar.
+   -------------------------------------------------------------------------- */
+
+.section.light {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  /* quase preto puxado para o roxo, a mesma família do #8c00ff das ondas */
+  background: #15101c;
+  color: var(--paper);
+}
+
+.fundoOndas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.fundoOndas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* tudo que é conteúdo da seção sobe acima do fundo */
+.section.light > *:not(.fundoOndas) {
+  position: relative;
+  z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   19. Inversão das seções claras — correções de contraste, todas medidas
+   --------------------------------------------------------------------------
+   Com o fundo escuro, varri todo o texto das quatro seções e encontrei 14
+   reprovações. Cada bloco abaixo traz o número que o motivou.
+   -------------------------------------------------------------------------- */
+
+/* (a) Os cards BRANCOS dentro das seções continuam com texto escuro.
+   O `color: var(--paper)` da seção vazou para dentro deles e deixou texto
+   branco sobre branco: 1,05:1. Defeito meu, não herdado. */
+.section.light .events article,
+.section.light .logos span,
+.section.light .setorItem {
+  color: var(--ink);
+}
+
+/* (b) Parágrafos de apoio: --muted-light (#5f6066) foi feito para fundo claro e
+   mede 2,99:1 no escuro. --muted-dark é o par que o próprio site já define. */
+.section.light .heading > p,
+.section.light.agenda > div > p {
+  color: var(--muted-dark);
+}
+
+/* (c) O rótulo da Agenda era pego pela regra `.agenda > div > p`, que não abre
+   exceção para .kicker — então ele vinha em cinza de fundo claro, 2,99:1.
+   Volta a ser laranja, no tom clareado que passa sobre escuro. */
+.section.light .kicker {
+  color: #ffbb7a;
+}
+
+/* (d) O link da agenda era var(--ink): 1,16:1. */
+.section.light .darkUnder {
+  color: var(--paper);
+  border-color: #ffffff3d;
+}
+
+/* (e) O índice das Soluções é corrigido em solucoes-anel.css, não aqui:
+   aquele arquivo é importado DEPOIS deste, então as regras dele vencem por
+   ordem de origem e as correções daqui não teriam efeito. */
+
+/* --------------------------------------------------------------------------
+   20. Menu de celular
+   --------------------------------------------------------------------------
+   Medido antes: abaixo de 980px os quatro links da nav ficavam em display:none
+   e não havia botão nenhum. O celular ficava sem navegação.
+
+   O botão só existe onde os links somem; acima disso ele some e a navegação
+   normal volta. As duas regras usam o mesmo ponto de corte de propósito — se
+   divergirem, aparece uma faixa de largura sem menu algum, que é exatamente o
+   defeito que isto corrige.
+   -------------------------------------------------------------------------- */
+
+.menuBotao {
+  display: none;
+  flex: none;
+  /* 44×44: alvo confortável de toque, acima do mínimo de 24 */
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--paper);
+  cursor: pointer;
+}
+
+.menuBarras {
+  display: grid;
+  gap: 5px;
+  justify-items: end;
+  width: 22px;
+  margin: 0 auto;
+}
+
+.menuBarras i {
+  display: block;
+  width: 22px;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform 260ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 180ms linear, width 260ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.menuBarras i:nth-child(2) {
+  width: 15px;
+}
+
+/* aberto: as barras viram um X */
+.menuBotao[aria-expanded="true"] .menuBarras i:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menuBotao[aria-expanded="true"] .menuBarras i:nth-child(2) {
+  opacity: 0;
+}
+
+.menuBotao[aria-expanded="true"] .menuBarras i:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.menuBotao:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+
+.menuPainel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  padding: 10px;
+  border: 1px solid #ffffff1f;
+  border-radius: 22px;
+  background: #16161acc;
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+  box-shadow: 0 22px 54px #0009;
+}
+
+.menuPainel[hidden] {
+  display: none;
+}
+
+.menuPainel nav {
+  display: grid;
+}
+
+.menuPainel nav a {
+  /* 52px de altura: alvo de toque com folga, e a lista fica fácil de acertar
+     com o polegar */
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 14px;
+  border-radius: 14px;
+  color: var(--paper);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.menuPainel nav a:active {
+  background: #ffffff14;
+}
+
+.menuPainel nav a:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: -2px;
+}
+
+.menuWhats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  margin-top: 8px;
+  font-size: 14px;
+}
+
+/* --------------------------------------------------------------------------
+   O ponto de corte: onde os links somem, o botão aparece
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 980px) {
+  .menuBotao {
+    display: block;
+  }
+
+  /* o botão de WhatsApp da barra já está oculto neste tamanho pelo
+     original.css; o painel traz o dele */
+  .nav {
+    position: fixed;
+  }
+}
+
+@media (min-width: 981px) {
+  /* acima do corte o painel não existe, nem quando o estado ficou aberto */
+  .menuPainel {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menuBarras i {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   21. Alvos de toque pequenos demais
+   --------------------------------------------------------------------------
+   Medido em 375px, com o mínimo de 24×24 do piso de craft:
+     redes sociais do rodapé -> 48×11 a 58×11
+     caixa de consentimento  -> 18×52
+   O texto e o desenho não mudam; o que cresce é a área que recebe o toque.
+   -------------------------------------------------------------------------- */
+
+footer .social a,
+footer nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  /* o respiro lateral entra como padding para a área crescer sem afastar os
+     itens na horizontal */
+  padding-inline: 2px;
+}
+
+.contact .consent input[type="checkbox"],
+.contact input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}

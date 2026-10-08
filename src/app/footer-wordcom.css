@@ -1,0 +1,169 @@
+footer.wordcomFooter {
+  display: block;
+  padding: 72px 8vw 28px;
+  background: #171717;
+  color: #f9f9f9;
+  border-top: 1px solid #ffffff24;
+  text-align: left;
+  letter-spacing: 0;
+}
+
+.wordcomFooter div { font-size: inherit; letter-spacing: 0; }
+
+.wordcomFooter .footerColumns {
+  display: grid;
+  grid-template-columns: 1.35fr 0.85fr 1.1fr 1.2fr;
+  align-items: start;
+  gap: 40px;
+}
+
+.wordcomFooter .footerBrand img {
+  display: block;
+  width: 220px;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  filter: none;
+}
+
+.wordcomFooter .footerSignature {
+  margin: 24px 0 16px;
+  color: #f9f9f9;
+  font-size: 18px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.wordcomFooter .footerDescription {
+  max-width: 30ch;
+  color: #c9c9cf;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.wordcomFooter h2, .wordcomFooter h3 {
+  margin: 0 0 20px;
+  color: #f9f9f9;
+  font-size: 16px;
+  font-weight: 750;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+.wordcomFooter ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wordcomFooter a {
+  font-size: 16px;
+  line-height: 1.5;
+  text-transform: none;
+  letter-spacing: 0;
+  border: 0;
+  color: #c9c9cf;
+  text-decoration: none;
+  touch-action: manipulation;
+}
+
+.wordcomFooter nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+}
+
+.wordcomFooter .footerWhatsapp {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  color: #ffbb7a;
+  font-weight: 650;
+}
+
+.wordcomFooter .footerPhone {
+  display: inline-block;
+  margin: 8px 0 12px;
+}
+
+.wordcomFooter .footerBrief {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+}
+
+.wordcomFooter .footerLocations {
+  margin-top: 28px;
+}
+
+.wordcomFooter .footerDocuments {
+  display: grid;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.wordcomFooter .footerDocuments a {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  padding-block: 10px;
+}
+
+.wordcomFooter .footerDocuments svg {
+  flex: none;
+  margin-top: 2px;
+  color: #ffbb7a;
+}
+
+.wordcomFooter .footerLocations h3 { margin-bottom: 12px; }
+.wordcomFooter .footerLocations ul { color: #c9c9cf; font-size: 16px; gap: 6px; }
+
+.wordcomFooter .footerBottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid #ffffff24;
+}
+
+.wordcomFooter .footerBottom small {
+  color: #c9c9cf;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.wordcomFooter .footerBackTop {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.wordcomFooter a:focus-visible {
+  outline: 2px solid #ffbb7a;
+  outline-offset: 5px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wordcomFooter a:hover { color: #ffbb7a; }
+}
+
+@media (max-width: 1100px) {
+  .wordcomFooter .footerColumns { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px; }
+}
+
+@media (max-width: 600px) {
+  footer.wordcomFooter { padding: 48px 22px calc(28px + env(safe-area-inset-bottom, 0px)); }
+  .wordcomFooter .footerColumns { grid-template-columns: minmax(0, 1fr); gap: 36px; }
+  .wordcomFooter .footerDescription { max-width: 38ch; }
+  .wordcomFooter .footerBottom { flex-direction: column; align-items: flex-start; margin-top: 40px; padding-right: 52px; }
+}

@@ -1,0 +1,121 @@
+/* ==========================================================================
+   Projetos próprios — pilha de cartas
+   --------------------------------------------------------------------------
+   O original.css pinta esta seção com um gradiente claro e saturado
+   (#6b13c5 → #a51a75 → #ef671d). As artes são escuras e só se leem sobre
+   terreno escuro. A troca acontece aqui — original.css continua intocado.
+   ========================================================================== */
+
+.section.projects {
+  overflow: clip;
+  background:
+    radial-gradient(120% 90% at 82% 8%, #a51a7547 0%, #0000 58%),
+    radial-gradient(90% 80% at 6% 96%, #6b13c53d 0%, #0000 56%),
+    radial-gradient(70% 60% at 98% 92%, #ef671d2e 0%, #0000 60%),
+    #120d1a;
+}
+
+.projects .headingProjetos {
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 32px;
+}
+
+.projects .headingProjetos h2 {
+  font-family: var(--font-wordcom), Arial, sans-serif;
+  font-size: 64px;
+  font-weight: 780;
+  font-optical-sizing: auto;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.projects .headingProjetos h2 strong { display: block; }
+.projects .headingProjetos h2 br { display: none; }
+
+.projectsScrollStack {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 32px;
+  padding-block: 0;
+}
+
+.projectsScrollStack::after {
+  content: "";
+  flex: none;
+  height: 128px;
+}
+
+.projectScrollSlot {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.projectScrollCard {
+  position: relative;
+  flex: none;
+  width: min(100%, 1120px);
+  aspect-ratio: 3 / 1;
+  max-width: 100%;
+  transform-origin: top;
+}
+
+.projectScrollCard a {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  touch-action: manipulation;
+}
+
+.projectScrollCard img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.projectScrollCard a:focus-visible {
+  outline: 3px solid #ff8a1f;
+  outline-offset: 4px;
+}
+
+@media (max-width: 1000px) {
+  .projects .headingProjetos h2 { font-size: 40px; }
+}
+
+@media (max-width: 600px) {
+  .projects .headingProjetos h2 { font-size: 32px; }
+  .projectsScrollStack {
+    width: calc(100% + 10vw);
+    margin-inline: -5vw;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 360px) {
+  .projects .headingProjetos h2 { font-size: 26px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projectsScrollStack { min-height: 0; padding-block: 24px; gap: 16px; }
+  .projectsScrollStack::after { display: none; }
+  .projectScrollSlot { position: relative; top: 0 !important; }
+  .projectScrollCard { top: 0 !important; transform: none !important; }
+}
+
+.glassCardTexto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

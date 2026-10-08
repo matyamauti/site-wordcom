@@ -1,0 +1,23 @@
+.root { width: min(100%, 560px); margin-inline: auto; }
+.stage { height: 380px; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 32px; }
+.folder { position: relative; width: min(320px, calc(100% - 32px)); height: 208px; perspective: 1000px; }
+.back { position: absolute; inset: 0 6.25%; border-radius: 8px; background: #18151b; border: 1px solid #ffffff24; box-shadow: inset 0 0 24px #4f49554d; }
+.paper { position: absolute; top: 8px; left: 32.5%; width: 35%; height: 196px; background: #f9f9f9; color: #212121; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 24px #0006; transform-origin: bottom center; }
+.cover { width: 100%; height: 148px; object-fit: contain; background: white; }
+.paperTitle { display: flex; align-items: center; justify-content: center; height: 48px; padding: 5px 8px; font-size: 10px; font-weight: 700; line-height: 1.35; text-align: center; }
+.front { position: absolute; left: 0; right: 0; bottom: 0; height: 172px; z-index: 2; border: 0; cursor: pointer; transform-origin: bottom center; color: #f9f9f9; background: transparent; }
+.flap { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 8px 12px #0004); }
+.flap path { fill: #2d2535e8; stroke: #ffffff38; stroke-width: 0.7; }
+.folderLabel { position: absolute; inset: 52px 20px 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.folderLabel img { width: 120px; height: auto; }
+.folderLabel > span { font-size: 12px; line-height: 1.4; }
+.folderLabel small { color: #ffbb7a; font-size: 11px; }
+.documents { list-style: none; padding: 0; margin: 24px 0 0; border-top: 1px solid #ffffff24; }
+.documents li { display: flex; align-items: center; gap: 16px; padding-block: 18px; border-bottom: 1px solid #ffffff24; }
+.documentLink { flex: 1; display: flex; align-items: center; gap: 20px; justify-content: space-between; min-height: 44px; }
+.documentLink strong { display: block; font-size: 16px; font-weight: 650; line-height: 1.5; }
+.documentLink small { display: block; margin-top: 4px; font-size: 13px; color: #c9c9cf; }
+.documentLink svg { flex: none; }
+.download { display: grid; place-items: center; width: 44px; height: 44px; color: #ffbb7a; }
+.root :is(a, button):focus-visible { outline: 3px solid #ffbb7a; outline-offset: 4px; }
+@media (hover: hover) and (pointer: fine) { .documents a:hover { color: #ffbb7a; } }

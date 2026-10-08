@@ -1,0 +1,12 @@
+{
+  "source": "heroMobile.mp4",
+  "duration": 10,
+  "sourceResolution": "1080x1920",
+  "resolution": "720x1280",
+  "fps": 24,
+  "frameCount": 240,
+  "format": "webp",
+  "quality": 75,
+  "namingPattern": "frame-{NNNN}.webp",
+  "purpose": "Mobile-only scroll sequence, complete octopus transformation without wordmark"
+}

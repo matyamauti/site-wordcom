@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Camada_2" data-name="Camada 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 365.78 414.91">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#Gradiente_sem_nome_3-2);
+      }
+
+      .cls-2 {
+        fill: url(#Gradiente_sem_nome_3-3);
+      }
+
+      .cls-3 {
+        fill: url(#Gradiente_sem_nome_4);
+      }
+
+      .cls-4 {
+        fill: url(#Gradiente_sem_nome_3);
+      }
+    </style>
+    <linearGradient id="Gradiente_sem_nome_3" data-name="Gradiente sem nome 3" x1="182.98" y1="802.2" x2="182.98" y2="617.19" gradientTransform="translate(0 1029.77) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#7d007d"/>
+      <stop offset="1" stop-color="#7d00ff"/>
+    </linearGradient>
+    <linearGradient id="Gradiente_sem_nome_3-2" data-name="Gradiente sem nome 3" x1="301.45" x2="301.45" xlink:href="#Gradiente_sem_nome_3"/>
+    <linearGradient id="Gradiente_sem_nome_3-3" data-name="Gradiente sem nome 3" x1="58.59" y1="802.2" x2="58.59" y2="617.19" xlink:href="#Gradiente_sem_nome_3"/>
+    <linearGradient id="Gradiente_sem_nome_4" data-name="Gradiente sem nome 4" x1="182.89" y1="1030.82" x2="182.89" y2="645.15" gradientTransform="translate(0 1029.77) scale(1 -1)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ff7d00"/>
+      <stop offset="1" stop-color="#7d00ff"/>
+    </linearGradient>
+  </defs>
+  <g id="Camada_1-2" data-name="Camada 1">
+    <g>
+      <path class="cls-4" d="M162.52,262.78l13.63,145.99c.87,8.19,12.75,8.18,13.63,0l13.63-145.99c.1-1.21.12-2.56,0-3.82-3.54-27.01-42.42-23.33-40.88,3.82h-.01Z"/>
+      <path class="cls-1" d="M341.84,305.37l-50.14-66.65c-6.81-9.32-21.46-9.38-28.28,0-5.87,7.81-4.31,18.9,3.5,24.78l66.65,50.14c5.36,4.05,12.31-2.85,8.26-8.26h.01Z"/>
+      <path class="cls-2" d="M93.16,246.9c-7.81-5.87-18.9-4.31-24.78,3.5l-50.14,66.65c-4.05,5.36,2.85,12.31,8.26,8.26l66.65-50.14c9.32-6.81,9.37-21.46,0-28.28h.01Z"/>
+      <path class="cls-3" d="M365.45,146.03c-.79-8.64-13.38-8.95-14.57-.32-1.37,10.9-4.28,21.34-9,30.41-16.95,34.9-64.01,45.81-96.14,27.37-14.33-7.87-22.89-20.2-25.89-34.76l25.04-24.2c34.21-33.06,34.21-86.66,0-119.73h0c-34.21-33.06-89.67-33.06-123.88,0h0c-34.21,33.06-34.21,86.66,0,119.73l25.08,24.24c-1.36,6.93-4.02,13.4-8.29,19.29-21.17,28.39-67.04,31.94-95.15,10.39-16.28-12.15-25.15-31.98-27.6-52.49-.32-3.46-3.09-6.33-6.69-6.63-4.03-.34-7.57,2.66-7.91,6.69-1.03,12.28-.38,25.12,3.07,37.79,11.11,42.77,51.75,68.81,94.19,71.85-4.93,7.1-8.99,14.83-11.95,23.03-14.85,37.06-4.25,85.12,30.21,106.29,6.84,4.36,14.85-4.34,9.81-10.81-9.34-12.8-14.4-26.8-14.94-40.76-1.91-37.94,27.88-76.8,66.71-77.9,8.09-.04,16.75-.24,24.56,2.08,32.14,8.46,54.5,42.65,52.94,75.82-.54,13.97-5.61,27.96-14.95,40.76-4.97,6.41,2.81,15.16,9.81,10.81,15.84-9.94,28.4-27,33.6-46.53,7.86-29.33.81-59.42-15.63-82.92,53.23-3.17,102.62-41.49,97.54-109.51h.03Z"/>
+    </g>
+  </g>
+</svg>

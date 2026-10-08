@@ -1,0 +1,225 @@
+/* ==========================================================================
+   Hero em sequência de quadros — WordCom
+   --------------------------------------------------------------------------
+   A primeira dobra é o filme da marca, com a rolagem no lugar da linha do
+   tempo. Três frases entram no trecho final; a primeira metade roda limpa.
+
+   Paleta: a do site. O #0d050f do fundo é a cor dominante medida no próprio
+   filme (37,9% do quadro) e serve de base para o canvas não piscar branco
+   antes do primeiro desenho.
+   ========================================================================== */
+
+.seqTrilha {
+  position: relative;
+  /* 500vh e não os 700vh da página de teste: com 240 quadros isso dá ~19px de
+     rolagem por quadro (contra 39px antes), e a pessoa chega ao conteúdo do
+     site com bem menos rolagem. Numa home, hero de 700vh é demais. */
+  height: 500svh;
+  background: #0d050f;
+}
+
+.seqPalco {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: #0d050f;
+  isolation: isolate;
+}
+
+.seqCanvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Véu direcional: sólido onde o texto mora, aberto onde o filme aparece.
+   O filme é roxo quase preto, mas tem lampejos claros — sem isto o texto
+   pequeno não teria piso de contraste garantido. */
+.seqVeu {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, #0d050fd9 0%, #0d050f52 38%, #0d050f00 64%),
+    linear-gradient(0deg, #0d050fb8 0%, #0d050f00 34%);
+}
+
+/* --------------------------------------------------------------------------
+   Frases
+   -------------------------------------------------------------------------- */
+
+.seqFrases {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.seqFrase {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  align-content: center;
+  column-gap: clamp(10px, 1.2vw, 20px);
+  padding: 120px clamp(20px, 8vw, 115px) 110px;
+  visibility: hidden;
+  /* a visibilidade espera a saída terminar, senão a frase some de um quadro
+     para o outro em vez de deslizar para fora */
+  transition: visibility 0s linear 480ms;
+}
+
+.seqFrase.eVisivel {
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.seqCopy {
+  grid-column: 1 / 7;
+  align-self: center;
+}
+
+.seqFrase--longa .seqCopy {
+  /* "A última palavra em comunicação" tem 31 caracteres contra 21 da
+     primeira: na coluna estreita ocuparia 5 linhas */
+  grid-column: 1 / 10;
+}
+
+/* --------------------------------------------------------------------------
+   Tipografia
+   --------------------------------------------------------------------------
+   O CORTE DO "0", medido e corrigido aqui.
+   A página de teste tinha line-height .82 com fonte de 118px: caixa de linha
+   de 96,8px para glifos de 118px, ou seja 21px transbordando por linha. Como
+   o mecanismo de revelação usa overflow:hidden, o excesso era decepado — e o
+   zero de "360", glifo de altura cheia na última linha, aparecia cortado.
+   O padding-bottom de .08em compensava 9 dos 21px.
+   Agora: line-height .92 (a caixa passa a conter o glifo) e padding de .22em
+   de folga. Sem isso, qualquer ajuste de tamanho volta a cortar.
+   -------------------------------------------------------------------------- */
+
+.seqTitulo {
+  margin: 0;
+  font-size: clamp(46px, 6.6vw, 104px);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+  color: #f9f9f9;
+  text-wrap: balance;
+}
+
+.seqFrase--longa .seqTitulo {
+  font-size: clamp(40px, 5.4vw, 86px);
+}
+
+/* "Agência 360" com o gradiente da marca, o mesmo tratamento que a hero
+   anterior já usava em .hero h1 strong */
+.seqTitulo strong {
+  font-weight: 800;
+  background: linear-gradient(100deg, #7d00ff, #be3f80, #ff7d00);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: #0000;
+}
+
+.seqApoio {
+  margin: 22px 0 0;
+  max-width: 34ch;
+  font-size: clamp(15px, 1.2vw, 18px);
+  line-height: 1.6;
+  color: #c8c8c8;
+}
+
+/* --------------------------------------------------------------------------
+   Revelação de borda dura: o texto sobe de dentro de uma janela.
+   Sem blur — a skill pede movimento ortogonal, e blur durante rolagem é caro.
+   -------------------------------------------------------------------------- */
+
+.revela {
+  overflow: hidden;
+  padding-bottom: 0.22em;
+}
+
+.revela > span {
+  display: block;
+  transform: translateY(115%);
+  transition: transform 760ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.seqApoio.revela > span {
+  transition-delay: 90ms;
+}
+
+.eVisivel .revela > span {
+  transform: translateY(0);
+}
+
+/* saída mais rápida que a entrada */
+.seqFrase:not(.eVisivel) .revela > span {
+  transition-duration: 480ms;
+  transition-delay: 0s;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile — não é desktop encolhido
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .seqCopy,
+  .seqFrase--longa .seqCopy {
+    grid-column: 1 / 13;
+  }
+
+  .seqFrase {
+    align-content: end;
+    padding: 96px clamp(20px, 6vw, 40px) 104px;
+  }
+
+  /* em retrato o texto ocupa a largura toda, então o véu vira vertical */
+  .seqVeu {
+    background: linear-gradient(0deg, #0d050fe6 0%, #0d050fa8 46%, #0d050f33 100%);
+  }
+
+  .seqTitulo {
+    font-size: clamp(38px, 10.5vw, 62px);
+  }
+
+  .seqFrase--longa .seqTitulo {
+    font-size: clamp(34px, 9vw, 54px);
+  }
+
+  .seqApoio {
+    font-size: 15px;
+    max-width: 30ch;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Movimento reduzido: um quadro fixo, a primeira frase legível, trilha sem
+   altura extra. Nada depende de rolagem para existir.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .seqTrilha {
+    height: 100svh;
+  }
+
+  .seqFrase:not(:first-of-type) {
+    display: none;
+  }
+
+  .seqFrase:first-of-type {
+    visibility: visible;
+  }
+
+  .seqFrase:first-of-type .revela > span {
+    transform: translateY(0);
+    transition: none;
+  }
+}

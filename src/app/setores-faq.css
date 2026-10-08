@@ -1,0 +1,259 @@
+.section.sectors > .setoresFundo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.28;
+}
+
+.setoresFundo img {
+  object-fit: cover;
+  object-position: center;
+}
+
+.setoresFaqLayout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  align-items: start;
+  gap: 64px;
+}
+
+.setoresTitulo {
+  max-width: 100%;
+  margin: 0 0 40px;
+  color: #f9f9f9;
+  font-size: 64px;
+  font-weight: 780;
+  line-height: 0.98;
+  font-optical-sizing: auto;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+
+.setoresTitulo span {
+  background: linear-gradient(104deg, #a855f7, #e0479a 48%, #ff7d00);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.setoresFaqIntro > p {
+  max-width: 38ch;
+  margin: 0;
+  color: #cfcfd4;
+  font-size: 16px;
+  line-height: 1.75;
+}
+
+.setoresFaqIntro > .setoresFaqContact {
+  margin-top: 32px;
+}
+
+.setoresFaqContact a {
+  color: #ffbb7a;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: #ffbb7a66;
+  transition: text-decoration-color 150ms ease;
+}
+
+.setoresFaqContact a:focus-visible,
+.faqTrigger:focus-visible {
+  outline: 2px solid #ffbb7a;
+  outline-offset: 4px;
+}
+
+.setoresFaq {
+  min-width: 0;
+  border-top: 1px solid #ffffff26;
+}
+
+.faqItem {
+  border-bottom: 1px solid #ffffff26;
+}
+
+.faqHeading {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.faqTrigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  min-height: 88px;
+  padding: 24px 4px;
+  border: 0;
+  background: transparent;
+  color: #f9f9f9;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: color 150ms ease;
+}
+
+.faqTrigger:active {
+  color: #ffbb7a;
+}
+
+.faqQuestionGroup {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 8px;
+}
+
+.faqSector {
+  color: #ffbb7a;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+.faqQuestion {
+  font-size: 17px;
+  font-weight: 550;
+  line-height: 1.5;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.faqChevron {
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  color: #cfcfd4;
+  transition: transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.faqTrigger[data-state="open"] .faqChevron {
+  color: #ffbb7a;
+  transform: rotate(180deg);
+}
+
+.faqContent {
+  overflow: hidden;
+}
+
+/* Radix fornece a altura real e mantem o painel montado durante a saida. */
+.faqContent[data-state="open"] {
+  animation: setorFaqAbre 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.faqContent[data-state="closed"] {
+  animation: setorFaqFecha 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.faqContentInner {
+  padding: 0 4px 24px;
+}
+
+.faqAnswer {
+  max-width: 70ch;
+  margin: 0;
+  color: #cfcfd4;
+  font-size: 16px;
+  line-height: 1.75;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
+}
+
+.faqWord {
+  display: inline-block;
+}
+
+@keyframes setorFaqAbre {
+  from { height: 0; }
+  to { height: var(--radix-accordion-content-height); }
+}
+
+@keyframes setorFaqFecha {
+  from { height: var(--radix-accordion-content-height); }
+  to { height: 0; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .faqTrigger:hover {
+    color: #ffbb7a;
+  }
+
+  .setoresFaqContact a:hover {
+    text-decoration-color: #ffbb7a;
+  }
+}
+
+@media (max-width: 1200px) {
+  .setoresTitulo {
+    font-size: 48px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .setoresFaqLayout {
+    gap: 40px;
+  }
+
+  .setoresTitulo {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 760px) {
+  .setoresFaqLayout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+
+  .setoresTitulo {
+    max-width: 100%;
+    margin-bottom: 28px;
+    font-size: 32px;
+    line-height: 1.06;
+  }
+
+  .setoresFaqIntro > p {
+    max-width: 55ch;
+    margin-top: 0;
+  }
+
+  .setoresFaqIntro > .setoresFaqContact {
+    margin-top: 20px;
+  }
+
+  .faqTrigger {
+    gap: 16px;
+    padding-block: 20px;
+  }
+
+  .faqQuestion {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .setoresTitulo {
+    font-size: 22px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faqContent[data-state] {
+    animation: none;
+  }
+
+  .faqTrigger,
+  .faqChevron,
+  .setoresFaqContact a {
+    transition: none;
+  }
+
+  .faqWord {
+    opacity: 1 !important;
+    filter: none !important;
+  }
+}

@@ -1,0 +1,384 @@
+/* ==========================================================================
+   Anel 3D das soluções — WordCom
+   --------------------------------------------------------------------------
+   Base: CircularCarousel do React Bits (variante JS-CSS), preset cylinder.
+   O card mantém exatamente o visual que .services article já tinha em
+   original.css — mesma borda, mesmo padding, mesmos tamanhos e cores. O que
+   muda é só o que o anel exige: caixa de medida fixa, fundo sólido (o card
+   agora flutua, não está mais numa grade) e nada de hover (um lift de hover
+   brigaria com o transform 3D do próprio anel).
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Duas colunas: anel à esquerda, índice à direita
+   --------------------------------------------------------------------------
+   O anel sozinho mostrava um serviço por vez. Com o índice ao lado, as seis
+   frentes ficam legíveis ao mesmo tempo e a seção para de parecer vazia.
+   -------------------------------------------------------------------------- */
+
+.solucoesDupla {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  align-items: center;
+  gap: clamp(28px, 4vw, 72px);
+}
+
+.solucoesIndice {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.solucoesIndice li {
+  border-bottom: 1px solid var(--line);
+}
+
+.solucoesIndice button {
+  display: grid;
+  grid-template-columns: 2.6em 1fr;
+  gap: 14px;
+  width: 100%;
+  /* 44px de alvo de toque vêm do padding somado à altura das duas linhas */
+  padding: 16px 4px;
+  background: none;
+  border: 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  /* Nada de apagar os itens inativos com opacity: o índice existe justamente
+     para as seis explicações ficarem legíveis ao mesmo tempo, e opacidade
+     derruba o contraste de tudo que está dentro. O estado ativo é um
+     acréscimo — tinta no número e um fundo discreto —, não um apagamento dos
+     outros. */
+  transition: background-color 260ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.solucoesIndice button[aria-current] {
+  background-color: #21212108;
+}
+
+.solucoesIndice button:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: -2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .solucoesIndice button:hover {
+    background-color: #21212110;
+  }
+}
+
+/* Resposta no apertar, não no soltar (apple-design §1): a realimentação vem no
+   pointer-down e é instantânea. Esperar o clique completar para mostrar
+   qualquer coisa é o que faz uma interface parecer morta. */
+.solucoesIndice button:active {
+  background-color: #2121211c;
+  transition-duration: 60ms;
+}
+
+.indiceN {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.9;
+  /* medido: #8e8e93 sobre o #f5f5f7 da seção dá 2,99:1, abaixo do mínimo de
+     4,5 para texto de 11px */
+  color: #5f5f64;
+}
+
+.solucoesIndice button[aria-current] .indiceN {
+  color: var(--pink);
+}
+
+.indiceCorpo {
+  display: block;
+}
+
+.indiceCorpo strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.indiceCorpo > span {
+  display: block;
+  /* medida curta de propósito: a coluna é estreita e o texto tem de ser lido de
+     relance, não estudado */
+  max-width: 44ch;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #6b6b6b;
+}
+
+.anel {
+  position: relative;
+  width: 100%;
+  /* altura da caixa onde o anel é encaixado; o componente mede e escala para
+     caber dentro dela */
+  height: clamp(420px, 52vw, 560px);
+  overflow: hidden;
+  outline: none;
+  /* o dedo subindo e descendo continua rolando a página; só o arraste
+     horizontal gira o anel */
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: grab;
+}
+
+.anel[data-arrastando] {
+  cursor: grabbing;
+}
+
+.anel:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 4px;
+}
+
+.anelPalco {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.anelPalco,
+.anelCamera,
+.anelAro,
+.anelCard {
+  transform-style: preserve-3d;
+}
+
+.anelCamera {
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+.anelAro {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+}
+
+.anelCard {
+  position: absolute;
+  left: calc(var(--anel-largura) / -2);
+  top: calc(var(--anel-altura) / -2);
+  width: var(--anel-largura);
+  height: var(--anel-altura);
+  /* o verso não é desenhado: o original espelha a foto no verso, e texto
+     espelhado é ilegível */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   O card — agora a arte pronta de public/midia/cards-direcao
+   --------------------------------------------------------------------------
+   A imagem já traz fundo, borda arredondada, número, nome e seta desenhados,
+   com brilho próprio e cantos transparentes. Por isso o <article> não desenha
+   fundo, borda nem sombra: qualquer um dos três apareceria como um retângulo
+   atrás dos cantos redondos da arte.
+   -------------------------------------------------------------------------- */
+
+.anelCard > article {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.anelCard > article img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* a proporção do card (0,754) é a mesma da arte convertida, então cover não
+     corta nada — está aqui só como rede de segurança */
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* O nome existe no documento mesmo tendo virado pixel na arte. */
+.soLeitor {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* A seta está desenhada na imagem; isto é o alvo de clique por cima dela.
+   Medido nos seis arquivos: centro em 89,5% × 12,0% do card. O alvo é bem maior
+   que o glifo — num card de 276×366 dá 44×40px, acima do mínimo de 24×24. */
+.anelSeta {
+  position: absolute;
+  left: 81.5%;
+  top: 6.5%;
+  width: 16%;
+  height: 11%;
+  border-radius: 50%;
+}
+
+.anelSeta:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 2px;
+}
+
+/* A sombra por profundidade acompanha o raio da arte, senão o escurecimento
+   apareceria com cantos quadrados sobre um card de cantos redondos. */
+.anelSombra {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: 20px;
+  background: var(--ink);
+  opacity: var(--anel-fundo, 0);
+}
+
+.anelVivo {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Mobile — card menor, caixa mais baixa
+   -------------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------------
+   Abaixo de 1000px as duas colunas viram uma: o anel em cima, o índice embaixo.
+   Lado a lado, nessa largura, nem um nem outro teria espaço para respirar.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1000px) {
+  .solucoesDupla {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}
+
+@media (max-width: 760px) {
+  .anel {
+    height: clamp(380px, 86vw, 460px);
+  }
+
+  /* Medido em 375px: o alvo da seta caía para 8×19 até 22×20 — o anel inteiro
+     encolhe, e com ele a porcentagem. Abaixo deste corte o card inteiro vira o
+     alvo, que é o que um polegar consegue acertar. A seta desenhada na arte
+     continua indicando onde tocar. */
+  .anelSeta {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 18px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Movimento reduzido: a grade estática que o componente devolve no lugar do
+   anel. Mesmo desenho de .services, sem depender de arraste.
+   -------------------------------------------------------------------------- */
+
+.anelGrade {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.anelGrade a {
+  display: block;
+  border-radius: 20px;
+}
+
+.anelGrade a:focus-visible {
+  outline: 2px solid var(--orange);
+  outline-offset: 3px;
+}
+
+.anelGrade img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 1000px) {
+  .anelGrade {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .anelGrade {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   Seção invertida: o índice agora vive sobre fundo escuro
+   --------------------------------------------------------------------------
+   Os três tons abaixo foram pensados para o #f5f5f7 que a seção tinha. Medido
+   sobre o escuro novo:
+     nome #212121      -> 1,16:1
+     descrição #6b6b6b -> 3,02:1
+     número #5f5f64    -> 2,95:1
+     número ativo, o --pink da marca -> 3,23:1
+   Todos reprovam. Os substitutos são da mesma família, clareados.
+   -------------------------------------------------------------------------- */
+
+.solucoesIndice {
+  border-top-color: #ffffff1f;
+}
+
+.solucoesIndice li {
+  border-bottom-color: #ffffff1f;
+}
+
+.indiceCorpo strong {
+  color: var(--paper);
+}
+
+.indiceCorpo > span {
+  color: #b9b5c2;
+}
+
+.indiceN {
+  color: #9c97a8;
+}
+
+.solucoesIndice button[aria-current] .indiceN {
+  /* o mesmo rosa clareado que os cards do anel já usam */
+  color: #d873a6;
+}
+
+/* os realces de estado eram tinta escura sobre claro — somem no escuro */
+.solucoesIndice button[aria-current] {
+  background-color: #ffffff0f;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .solucoesIndice button:hover {
+    background-color: #ffffff14;
+  }
+
+  .solucoesIndice button:active {
+    background-color: #ffffff1f;
+  }
+}

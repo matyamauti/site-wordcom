@@ -1,0 +1,279 @@
+/* ==========================================================================
+   Experiência setorial — acordeão
+   --------------------------------------------------------------------------
+   Seção clara, como já era: o fundo continua o #f5f5f7 que .light define, os
+   cards são brancos e o laranja da marca é o destaque.
+
+   SOBRE O LARANJA: medido, #ff7d00 sobre branco dá 2,57:1 — abaixo do mínimo
+   de 3:1 até para elemento gráfico. Então ele fica nas bordas e nos fundos
+   tingidos, que são decorativos, e os glifos que precisam ser lidos usam
+   --laranja-legivel, um laranja escurecido da mesma família.
+   ========================================================================== */
+
+.setores {
+  --laranja-legivel: #c75f00;
+  --laranja-fio: #ff7d0045;
+  --laranja-tinta: #ff7d000f;
+
+  display: grid;
+  /* duas colunas em fluxo por linha: dá exatamente a ordem
+     Logística | Indústria / Imobiliário | Educação / Hotelaria | Varejo */
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(12px, 1.3vw, 18px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.setorItem {
+  background: #fff;
+  border: 1px solid #0000000f;
+  border-radius: 20px;
+  box-shadow: 0 6px 20px #0000000a;
+  transition:
+    transform 320ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 320ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 320ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.setorItem.aberto {
+  border-color: var(--laranja-fio);
+  box-shadow: 0 10px 30px #ff7d0012;
+}
+
+/* --------------------------------------------------------------------------
+   O cabeçalho clicável — o card inteiro, não só o sinal
+   -------------------------------------------------------------------------- */
+
+.setorItem h3 {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.setorItem button {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  /* a altura fecha em 44px de alvo de toque com folga */
+  padding: 22px 22px 22px 20px;
+  background: none;
+  border: 0;
+  border-radius: inherit;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.setorItem button:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+
+.setorIcone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid #0000000f;
+  border-radius: 12px;
+  color: #5a5a60;
+  background: #f7f7f9;
+  transition:
+    color 320ms cubic-bezier(0.23, 1, 0.32, 1),
+    border-color 320ms cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 320ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.setorIcone svg {
+  width: 20px;
+  height: 20px;
+}
+
+.setorItem.aberto .setorIcone {
+  color: var(--laranja-legivel);
+  border-color: var(--laranja-fio);
+  background: var(--laranja-tinta);
+}
+
+.setorNome {
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+/* --------------------------------------------------------------------------
+   O sinal + / −
+   --------------------------------------------------------------------------
+   Duas barras cruzadas: a vertical gira e desaparece, e o que sobra é o traço
+   do menos. Trocar o caractere "+" por "−" daria um pulo seco no lugar disso.
+   -------------------------------------------------------------------------- */
+
+.setorSinal {
+  position: relative;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border: 1px solid #00000012;
+  border-radius: 50%;
+  background: #f7f7f9;
+  transition:
+    border-color 320ms cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 320ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.setorSinal i {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 12px;
+  height: 1.6px;
+  margin: -0.8px 0 0 -6px;
+  border-radius: 2px;
+  background: #4a4a50;
+  transition:
+    transform 380ms cubic-bezier(0.23, 1, 0.32, 1),
+    opacity 240ms linear,
+    background-color 320ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.setorSinal i:last-child {
+  transform: rotate(90deg);
+}
+
+.setorItem.aberto .setorSinal {
+  border-color: var(--laranja-fio);
+  background: var(--laranja-tinta);
+}
+
+.setorItem.aberto .setorSinal i {
+  background: var(--laranja-legivel);
+}
+
+/* a barra vertical gira até deitar sobre a horizontal e some */
+.setorItem.aberto .setorSinal i:last-child {
+  transform: rotate(180deg);
+  opacity: 0;
+}
+
+/* --------------------------------------------------------------------------
+   O painel
+   --------------------------------------------------------------------------
+   grid-template-rows de 0fr a 1fr: o navegador interpola até a altura exata do
+   conteúdo. Sem max-height chutado — um valor alto demais faz a abertura
+   correr e o fechamento ter um atraso morto — e sem animar `height`, que o
+   piso de craft proíbe.
+   -------------------------------------------------------------------------- */
+
+.setorPainel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 420ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.setorItem.aberto .setorPainel {
+  grid-template-rows: 1fr;
+}
+
+.setorPainelInterno {
+  /* min-height: 0 é o que permite a linha encolher até zero de verdade */
+  min-height: 0;
+  overflow: hidden;
+}
+
+.setorPainelInterno p {
+  /* o fio divisório entre título e conteúdo, como pedido */
+  margin: 0 22px 22px;
+  padding-top: 18px;
+  border-top: 1px solid #0000000d;
+  max-width: 48ch;
+  font-size: 13.5px;
+  line-height: 1.75;
+  color: #5f5f66;
+  /* o texto entra um instante depois da caixa abrir, senão aparece espremido */
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 260ms linear,
+    transform 380ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.setorItem.aberto .setorPainelInterno p {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 120ms;
+}
+
+/* --------------------------------------------------------------------------
+   Hover — só onde existe ponteiro fino
+   -------------------------------------------------------------------------- */
+
+@media (hover: hover) and (pointer: fine) {
+  .setorItem:hover {
+    transform: translateY(-3px);
+    border-color: #ff7d0033;
+    box-shadow: 0 14px 32px #00000012;
+  }
+
+  .setorItem:hover .setorSinal {
+    background: var(--laranja-tinta);
+    border-color: var(--laranja-fio);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Mobile — uma coluna, alvo de toque confortável
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .setores {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .setorItem button {
+    gap: 14px;
+    padding: 18px 18px 18px 16px;
+  }
+
+  .setorNome {
+    font-size: 14.5px;
+  }
+
+  .setorIcone {
+    width: 38px;
+    height: 38px;
+  }
+
+  .setorPainelInterno p {
+    margin: 0 18px 20px;
+    font-size: 13px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Movimento reduzido: abre e fecha sem percurso, mas continua abrindo.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .setorItem,
+  .setorPainel,
+  .setorSinal,
+  .setorSinal i,
+  .setorIcone,
+  .setorPainelInterno p {
+    transition: none;
+  }
+
+  .setorItem:hover {
+    transform: none;
+  }
+}

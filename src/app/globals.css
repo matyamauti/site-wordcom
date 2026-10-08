@@ -1,0 +1,67 @@
+/* O design do site, exatamente como está hoje. Arquivo intocado, para que
+   qualquer diff futuro mostre só o que foi de fato alterado. */
+@import "./original.css";
+
+/* Camada de correções que não alteram a aparência. Importada depois para
+   vencer por ordem de origem, sem precisar inflar especificidade. */
+@import "./melhorias.css";
+
+/* Hero em sequência de quadros: o filme da marca com a rolagem no lugar da
+   linha do tempo. Depois de melhorias.css porque redefine a primeira dobra. */
+@import "./hero-sequencia.css";
+
+/* Cases em coverflow 3D sobre video de fundo com opacidade reduzida. */
+@import "./cases.css";
+
+/* Solucoes em anel 3D e metodologia com as quatro artes numeradas. */
+@import "./solucoes-anel.css";
+@import "./metodo-jornada.css";
+/* Experiencia setorial: titulo em uma linha, fundo estatico e FAQ. */
+@import "./setores-faq.css";
+/* Projetos: artes amplas, proporcionais e percurso compacto de empilhamento. */
+@import "./projetos-linhas.css";
+/* Confianca construida: logos inteiros em circulos e faixa continua sem pausa. */
+@import "./clientes-marquee.css";
+
+/* Secoes em tela cheia, com faixa de indicadores compacta abaixo da hero. */
+@import "./secoes.css";
+/* Rodape institucional: marca, navegacao, solucoes e contato com leitura clara. */
+@import "./footer-wordcom.css";
+/* Fundo institucional estatico apenas nas quatro secoes escolhidas. */
+@import "./fundos-institucionais.css";
+/* Entradas locais com Motion; hero e pilha de projetos preservam seus motores. */
+@import "./entradas-scroll.css";
+/* Produto Empreenda Sim: video em loop sob camada de contraste. */
+@import "./produto-video.css";
+/* Paginas institucionais: documentos oficiais, visualizacao e download. */
+@import "./institucional.css";
+
+/* Padrao compartilhado dos destaques nos titulos da pagina inicial. */
+:root {
+  --titulo-destaque: linear-gradient(104deg, #a855f7, #e0479a 48%, #ff7d00);
+}
+
+main :is(.section, .contact) h2 .tituloDestaque,
+.seqTitulo .tituloDestaque {
+  background: var(--titulo-destaque);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-style: normal;
+}
+
+.seqTitulo .tituloDestaque {
+  font-style: italic;
+  /* Folga de pintura para as extremidades dos glifos inclinados. */
+  padding: 0.12em;
+  margin-inline: -0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.seqTitulo.revela:has(.tituloDestaque) {
+  padding-top: 0.14em;
+  padding-inline: 0.18em;
+  margin-top: -0.14em;
+  margin-inline: -0.18em;
+}

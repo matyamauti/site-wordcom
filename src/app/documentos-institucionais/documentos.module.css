@@ -1,0 +1,4 @@
+.preview { position: relative; isolation: isolate; min-height: calc(100svh - 104px); padding: 48px 24px 64px; background: #212121; }
+.preview::before { content: ""; position: absolute; inset: 0; z-index: -1; background: url("/midia/fundo-institucional.png") center / cover no-repeat; opacity: 0.18; pointer-events: none; }
+.preview h1 { margin: 0 auto 24px; max-width: 900px; font-size: 40px; font-weight: 780; line-height: 1.2; letter-spacing: 0; text-align: center; }
+@media (max-width: 600px) { .preview { min-height: calc(100svh - 88px); padding: 40px 22px; } .preview h1 { font-size: 28px; max-width: 340px; } }

@@ -1,0 +1,22 @@
+/* Fundos de ponta a ponta; o padding interno preserva a medida do conteudo. */
+main > :is(.section, .numbers, .contact, .hero, .productHero, .productInfo),
+body > footer {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  border-radius: 0;
+  border: 0;
+  box-shadow: none;
+}
+
+/* A full viewport per section; longer content keeps its natural scroll height. */
+main > section:not(.numbers) {
+  min-height: 100svh;
+  align-content: center;
+  scroll-margin-top: 0;
+}
+
+/* Preserve the scroll-driven timeline and the project stacking layout. */
+main > :is(.seqTrilha, .projects) {
+  align-content: normal;
+}
